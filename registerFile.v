@@ -12,8 +12,6 @@ module registerFile(
     output reg [63:0] ReadData2
 );
     reg [63:0] Registers[31:0];
-    
-    // Initializing the registers
     initial begin
         Registers[0] = 64'd0;
         Registers[1] = 64'd1;
@@ -48,22 +46,16 @@ module registerFile(
         Registers[30] = 64'd30;
         Registers[31] = 64'd31;
     end
-    
-    // Handling register writes
     always @(posedge clk) begin
         if (regWrite) begin
             Registers[rd] <= WriteData;
         end
     end
-    
-    // Reading data with updated values if a write occurs
     always @(*) begin
         if (reset) begin
             ReadData1 <= 64'b0;
             ReadData2 <= 64'b0;
         end else begin
-            // Ensure that if rs1 or rs2 is equal to rd and regWrite is active,
-            // the read reflects the new value being written.
             ReadData1 <= (regWrite && (rs1 == rd)) ? WriteData : Registers[rs1];
             ReadData2 <= (regWrite && (rs2 == rd)) ? WriteData : Registers[rs2];
         end
